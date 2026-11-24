@@ -34,8 +34,8 @@ The two weight archives are needed only to repeat the validation and IoU-distrib
 
 The 232 runs have two different roles and must not be merged into a single pool.
 
-- 212 runs belong to the main protocol: 182 base grid runs, 5 decisive runs, 15 frozen-backbone capacity-control runs, and 10 step-matched reinforcement runs. These support every result in Sections 5.1 to 5.5.
-- 20 runs are the Path-A contextual re-evaluation, in four conditions of five draws each (`u800_b8`, `u3200_b8`, `u800_b30`, `u800_n30`). They support Section 5.5b only.
+- 212 runs belong to the main protocol: 182 base grid runs, 5 decisive runs, 15 frozen-backbone capacity-control runs, and 10 step-matched reinforcement runs. These support every result in Sections 5.1 to 5.6.
+- 20 runs are the Path-A contextual re-evaluation, in four conditions of five draws each (`u800_b8`, `u3200_b8`, `u800_b30`, `u800_n30`). They support Section 5.7 only.
 
 The 20 Path-A runs are a contextual reference for a published few-shot figure (NEU-DET, 10-shot, mAP50 = 32.8%, reported as the CDT condition of Ghali, Benhafid and Selouani, *Benchmarking Few-Shot Learning Techniques for Steel Surface Defect Detection*, IEEE SWC 2025, DOI 10.1109/SWC65939.2025.00031). The shot definition, the split, the model size and the budget all differ from ours, and the split used for the published figure is not documented. These 20 runs must not be placed in the same table as the published value, must not be described as a reproduction or a like-for-like comparison, and must not be used as an effect estimate against it. The `u800_n30` condition is descriptive only: its split index is not comparable with the 10-shot conditions.
 
@@ -61,7 +61,7 @@ The two CSV indexes and the `scripts/` and `root_scripts/` trees are also extrac
 
 The detector is COCO-pretrained `yolov8s.pt` under `ultralytics` 8.4.208, with `nbs = 64`, `imgsz = 640`, SGD, `seed = 0`, `deterministic = true`, `patience = 1000` and a fixed `last.pt` checkpoint with no model selection. The effective batch is clamped as `batch = min(B, N)`, and gradient accumulation is `accumulate = max(round(nbs / batch), 1)`.
 
-`derived_optimizer_steps` in `run_index.csv` is a value derived from harness accounting, not a step-by-step measurement. The three settings reported in Appendix B of the paper are approximately 100, 400 and 133 updates for `accumulate` values of 8, 2 and 6 respectively. Do not label these as directly counted optimizer steps. The learning-rate arm has no step-matched counterpart at N = 30 and batch = 8, so the step-count mechanism demonstrated in Section 5.2b is not extended to that arm in the paper.
+`derived_optimizer_steps` in `run_index.csv` is a value derived from harness accounting, not a step-by-step measurement. The three settings reported in Appendix B of the paper are approximately 100, 400 and 133 updates for `accumulate` values of 8, 2 and 6 respectively. Do not label these as directly counted optimizer steps. The learning-rate arm has no step-matched counterpart at N = 30 and batch = 8, so the step-count mechanism demonstrated in Section 5.3 is not extended to that arm in the paper.
 
 `manifest.json` records one warning: `pathA_steps.json` was not present when the archive was built, so the `steps_source` column of the `run_index.csv` **inside the zip** falls back to `source default nbs=64` for all 232 rows. This repository already applies the correction: the `run_index.csv` at the repository root is the corrected version and takes precedence over the copy inside the zip, and the probe output is preserved in `patch/pathA_steps.json`. The underlying evidence is unaffected: all 20 Path-A `args.yaml` files are present in `args_yaml/` inside the zip.
 
@@ -79,14 +79,14 @@ To reproduce, unpack `final_export.zip`, replace the unpacked `run_index.csv` wi
 - The 1.451 cumulative ratio and the +45% figure refer to box counts accumulated over the four IoU bins from 0.80 to 0.95, not to a single bin.
 - The Welch t value of 0.21 in Section 5.1 compares the two final means 85.19 and 85.44 directly; it is not a comparison of the two paired gains.
 - The +2.97 gain in Section 5.1 is measured against the five-draw baseline of 82.47, not against the ten-draw baseline of 82.33 in the same table.
-- The -3.894 difference in Section 5.5b is marginally non-significant (95% CI [-7.853, +0.065]) and is reported as such.
+- The -3.894 difference in Section 5.7 is marginally non-significant (95% CI [-7.853, +0.065]) and is reported as such.
 - Eight early runs in the archive (`g1_full`, `g3_full` and the `shot10_s1` to `shot10_s3` variants of those two groups) carry a `surgery` field with `fca_layers`. They are exploratory snapshots of a frequency-attention candidate that was subsequently rejected; they do not appear in the paper and are not part of any reported result. The `surgery` field in all other runs records only head-width scaling and parameter counts.
 
 ## Data availability statement
 
-Suggested wording for the manuscript (replace `OWNER/REPO` once the repository is online, and append a Zenodo DOI if an archival release is created):
+Suggested wording for the manuscript (append a Zenodo DOI if an archival release is created):
 
-> The training and analysis scripts, the split definitions, the per-run configuration files and the final metrics of all 232 controlled runs are available at `https://github.com/OWNER/REPO`. The two public datasets analysed, DeepPCB and NEU-DET, are available from their respective sources.
+> The training and analysis scripts, the split definitions, the per-run configuration files and the final metrics of all 232 controlled runs are available at `https://github.com/Bittwonotwo/BME-protocol-evidence`. The two public datasets analysed, DeepPCB and NEU-DET, are available from their respective sources.
 
 ## Licence
 
@@ -96,5 +96,5 @@ The contents of this repository are released under the **Creative Commons Attrib
 
 A citation entry with volume, pages and DOI will be added once the article is published. Until then, cite the manuscript by its title and cite this repository as:
 
-> Author(s) (2026). *BME Protocol — Evidence Archive (232 controlled runs)*. GitHub. `https://github.com/OWNER/REPO`
+> Author(s) (2026). *BME Protocol — Evidence Archive (232 controlled runs)*. GitHub. `https://github.com/Bittwonotwo/BME-protocol-evidence`
 
