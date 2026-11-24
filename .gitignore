@@ -1,0 +1,20 @@
+# Large artefacts: exceed GitHub's per-file limit or are not needed to
+# recompute any reported number. They stay in the local MVP总包, not here.
+final_dataset.zip
+final_weights_runs_tfa.zip
+final_weights_runs_b8a.zip
+*.pt
+*.pth
+*.onnx
+*.engine
+
+# Model / training scratch
+runs/
+*.cache
+
+# Python / OS noise
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store
+Thumbs.db
