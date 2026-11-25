@@ -1,0 +1,7 @@
+# Pinned dependency for the 232 BME protocol runs.
+# First-hand version records: manifest.json (ultralytics 8.4.208),
+# pathA_steps.json probe output (trainer.py:325 of 8.4.208), and the
+# manuscript Experimental Setup section.
+# Python / PyTorch / CUDA build versions were not retained in the archived
+# run records; they are deliberately left unspecified rather than guessed.
+ultralytics==8.4.208

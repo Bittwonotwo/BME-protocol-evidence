@@ -10,15 +10,15 @@ The paper is a protocol and benchmark audit. It proposes no new detector, no new
 
 | Path | Approx. size | Description |
 |---|---|---|
-| `final_export.zip` | 5.5 MB | Complete evidence set: 6,150 entries, byte-identical to the archive that accompanies the submission |
-| `run_index.csv` | 51 KB | **Corrected** index, 232 runs plus header; the 20 Path-A rows carry their per-run `steps_source` annotation |
+| `final_export.zip` | 5.5 MB | Complete evidence set: 6,151 entries, byte-identical to the archive that accompanies the submission; the Path-A source patch is applied inside the archive |
+| `run_index.csv` | 51 KB | **Corrected** index, 232 runs plus header; the 20 Path-A rows carry their per-run `steps_source` annotation; byte-identical to the copy now inside `final_export.zip` |
 | `weights_index.csv` | — | All 466 weight files by group, path and size; the weights themselves are not distributed |
 | `scripts/`, `root_scripts/` | — | The 22 training, data-preparation, grid and analysis scripts, plus the 6 server-side probe and export scripts |
-| `figures/` | ~330 KB | The three manuscript figures as vector PDF plus 300 dpi PNG previews, and `figure_data.json` (per-figure numeric audit table) |
-| `patch/pathA_steps.json` | 52 KB | Output of the step-source probe used to correct `run_index.csv` |
-| `README.md`, `LICENSE`, `.gitignore` | — | This file, the licence and the exclusion rules |
+| `figures/` | ~269 KB | The three manuscript figures as vector PDF plus 300 dpi PNG previews, and `figure_data.json` (per-figure numeric audit table) |
+| `patch/pathA_steps.json` | 52 KB | Output of the step-source probe used to correct `run_index.csv`; the same file is now also included at the archive root |
+| `README.md`, `LICENSE`, `requirements.txt`, `.gitignore` | — | This file, the licence, the pinned dependency and the exclusion rules |
 
-`final_export.zip` is the smallest complete evidence set. Its md5 checksum is `e16fa873bdef5ae57beee3465c4e3012`.
+`final_export.zip` is the smallest complete evidence set. Its md5 checksum is `234c580bd17572a6fc53777a21b1deac` and its SHA-256 is `61dc486d5a33aafe9cbab1120579a4c9ee36f3f678fa32eb5d20e62e0f85fdab`. Both were recomputed after applying the Path-A source patch on 25 November 2026; the pre-patch archive had md5 `e16fa873bdef5ae57beee3465c4e3012`.
 
 ### Why three archives are not in this repository
 
@@ -53,7 +53,7 @@ The 20 Path-A runs are a contextual reference for a published few-shot figure (N
 | `root_scripts/` | 6 | The probe and export scripts actually executed on the server |
 | `selfcheck/` | 3 | TFA self-check, stage-2 IoU/confidence distribution, and weight-scan json |
 | `vis/` | 16 | Qualitative comparison images from the two self-check passes |
-| `docs/` | 9 | Historical how-to files and `requirements.txt` |
+| `docs/` | 9 | Historical how-to files and `requirements.txt` from early exploratory runs; they describe a rejected frequency-attention candidate and state no claim of the present paper |
 
 The two CSV indexes and the `scripts/` and `root_scripts/` trees are also extracted at the repository root so they can be read directly on the repository page without downloading the archive.
 
@@ -61,9 +61,11 @@ The two CSV indexes and the `scripts/` and `root_scripts/` trees are also extrac
 
 The detector is COCO-pretrained `yolov8s.pt` under `ultralytics` 8.4.208, with `nbs = 64`, `imgsz = 640`, SGD, `seed = 0`, `deterministic = true`, `patience = 1000` and a fixed `last.pt` checkpoint with no model selection. The effective batch is clamped as `batch = min(B, N)`, and gradient accumulation is `accumulate = max(round(nbs / batch), 1)`.
 
+The one pinned dependency is recorded in `requirements.txt` (`ultralytics==8.4.208`). Python, PyTorch and CUDA build versions were not retained in the archived run records, so they are not stated here rather than guessed. None of them is needed to recompute any reported quantity from `final_metrics/` and `run_index.csv`.
+
 `derived_optimizer_steps` in `run_index.csv` is a value derived from harness accounting, not a step-by-step measurement. The three settings reported in Appendix B of the paper are approximately 100, 400 and 133 updates for `accumulate` values of 8, 2 and 6 respectively. Do not label these as directly counted optimizer steps. The learning-rate arm has no step-matched counterpart at N = 30 and batch = 8, so the step-count mechanism demonstrated in Section 5.3 is not extended to that arm in the paper.
 
-`manifest.json` records one warning: `pathA_steps.json` was not present when the archive was built, so the `steps_source` column of the `run_index.csv` **inside the zip** falls back to `source default nbs=64` for all 232 rows. This repository already applies the correction: the `run_index.csv` at the repository root is the corrected version and takes precedence over the copy inside the zip, and the probe output is preserved in `patch/pathA_steps.json`. The underlying evidence is unaffected: all 20 Path-A `args.yaml` files are present in `args_yaml/` inside the zip.
+The Path-A source correction is applied **inside `final_export.zip`** as of 25 November 2026. The `run_index.csv` in the archive now annotates the 20 Path-A rows with `per-run args.yaml (pathA_steps.json v2, 20/20, cross_check_mismatch=0)` and the 212 historical rows with `source default nbs=64`; `pathA_steps.json` is included at the archive root; and `manifest.json` records the patch under `patch_applied`, with the SHA-256 of both files and an empty `warnings` list. Only the `steps_source` column of 20 rows changed: every `final_metrics.json`, `args.yaml`, `results.csv`, split, label and script is byte-identical to the pre-patch archive. The `run_index.csv` at the repository root is byte-identical to the corrected copy inside the zip, and `patch/pathA_steps.json` is the same probe output. The underlying evidence is unaffected: all 20 Path-A `args.yaml` files are present in `args_yaml/` inside the zip.
 
 ## Recomputing the reported numbers
 
@@ -71,7 +73,7 @@ All tables and figures in the paper are derived from `final_metrics/` and `run_i
 
 The three manuscript figures and the per-figure numeric audit table are provided in `figures/` in this repository, not inside `final_export.zip`.
 
-To reproduce, unpack `final_export.zip`, replace the unpacked `run_index.csv` with the corrected copy at the repository root, and use the environment versions listed above. Every reported quantity is a function of `final_metrics/` plus the paired grouping in `run_index.csv`; no weight file, dataset image or network download is required to recompute the tables.
+To reproduce, unpack `final_export.zip` and use the environment versions listed above. The corrected `run_index.csv` and `pathA_steps.json` are already inside the archive, so no replacement step is needed. Every reported quantity is a function of `final_metrics/` plus the paired grouping in `run_index.csv`; no weight file, dataset image or network download is required to recompute the tables.
 
 ## Interpretation constraints
 
@@ -84,7 +86,7 @@ To reproduce, unpack `final_export.zip`, replace the unpacked `run_index.csv` wi
 
 ## Data availability statement
 
-Suggested wording for the manuscript (append a Zenodo DOI if an archival release is created):
+This release is pinned at the git tag `v1.0-evidence`. No Zenodo DOI has been minted for this archive and none is claimed here; the tag plus the SHA-256 above identify the exact bytes. Suggested wording for the manuscript:
 
 > The training and analysis scripts, the split definitions, the per-run configuration files and the final metrics of all 232 controlled runs are available at `https://github.com/Bittwonotwo/BME-protocol-evidence`. The two public datasets analysed, DeepPCB and NEU-DET, are available from their respective sources.
 
