@@ -1,8 +1,8 @@
 # BME Protocol — Evidence Archive (232 controlled runs)
 
-This repository accompanies the manuscript *Budget-Matched Evaluation for Low-Annotation Industrial Defect Detection: How Effective-Batch Coupling and Learning Rate Confound Reported Gains*. It contains the training and analysis scripts, the split definitions, the per-run configuration files and the final metrics of all 232 controlled runs, so that every quantity reported in the paper can be recomputed from the command line.
+This repository accompanies the manuscript *Budget-Matched Evaluation as a Single-Harness Protocol Audit: Effective-Batch Coupling under a Fixed Nominal Budget in Low-Annotation Surface-Defect Detection*. It contains the training and analysis scripts, the split definitions, the per-run configuration files and the final metrics of all 232 controlled runs, so that every quantity reported in the paper can be recomputed from the command line.
 
-The paper is a protocol and benchmark audit. It proposes no new detector, no new architecture and no new loss; it reports how far a conclusion about a structural change can move when the number of optimizer updates is left implicit under a nominally fixed training budget. The central claim is that **fixing the nominal budget is not fixing the actual update count**.
+The paper is a protocol and benchmark audit. It proposes no new detector, no new architecture and no new loss; it reports how far a conclusion about a structural change can move when the number of optimizer updates is left implicit under a nominally fixed training budget. The central claim is that **fixing the nominal budget does not fix the derived optimizer-step estimate**.
 
 > **Repository scope.** This repository distributes the evidence archive and its browse-friendly indexes. It does **not** contain the manuscript text, the compiled paper, the source images of the two public datasets, or the trained weights. Those exclusions are deliberate and are explained below. The manuscript itself is submitted separately to the journal and is not posted here.
 
@@ -79,7 +79,7 @@ To reproduce, unpack `final_export.zip` and use the environment versions listed 
 
 - `mAP50` and `mAP50-95` can disagree in sign on the same paired weights. The frozen-backbone versus full-fine-tuning comparison at N = 100 is -1.89 on mAP50 and +9.12 on mAP50-95; the latter is a metric-specific observation and must not be written as an overall improvement or extrapolated across IoU thresholds.
 - The 1.451 cumulative ratio and the +45% figure refer to box counts accumulated over the four IoU bins from 0.80 to 0.95, not to a single bin.
-- The Welch t value of 0.21 in Section 5.1 compares the two final means 85.19 and 85.44 directly; it is not a comparison of the two paired gains.
+- The RQ1 comparison uses the common s1--s5 draws: the two paired gains differ by -0.27 points (95% CI [-4.13, +3.59]), which is not significant. A Welch test on the two final means (85.19 and 85.44) does not test the difference between the two gains.
 - The +2.97 gain in Section 5.1 is measured against the five-draw baseline of 82.47, not against the ten-draw baseline of 82.33 in the same table.
 - The -3.894 difference in Section 5.7 is marginally non-significant (95% CI [-7.853, +0.065]) and is reported as such.
 - Eight early runs in the archive (`g1_full`, `g3_full` and the `shot10_s1` to `shot10_s3` variants of those two groups) carry a `surgery` field with `fca_layers`. They are exploratory snapshots of a frequency-attention candidate that was subsequently rejected; they do not appear in the paper and are not part of any reported result. The `surgery` field in all other runs records only head-width scaling and parameter counts.
